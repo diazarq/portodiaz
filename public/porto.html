@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diaz Arqila — AI Enthusiast & UI/UX Designer</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          pixel: ['"Press Start 2P"', 'monospace'],
+          display: ['"Fredoka"', 'sans-serif'],
+          body: ['"Nunito"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+        colors: {
+          bg:     '#EEF3E4',
+          panel:  '#FFFDF7',
+          ink:    '#16213E',
+          muted:  '#5B6478',
+          red:    '#FF5A5F',
+          blue:   '#3A86FF',
+          yellow: '#FFC93C',
+          green:  '#3FA66E',
+          purple: '#7B61FF',
+        },
+      }
+    }
+  }
+</script>
+
+<style>
+  :root { --ink: #16213E; }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: #EEF3E4; }
+  ::-webkit-scrollbar-thumb { background: #16213E; border-radius: 0; border: 2px solid #EEF3E4; }
+  ::selection { background: #FFC93C; color: #16213E; }
+
+  body {
+    background-color: #EEF3E4;
+    background-image: radial-gradient(#c9d3b4 1.4px, transparent 1.4px);
+    background-size: 22px 22px;
+  }
+
+  /* Hard "pixel" drop shadow used everywhere instead of blurred/soft shadows */
+  .shadow-pixel    { box-shadow: 6px 6px 0 0 var(--ink); }
+  .shadow-pixel-sm { box-shadow: 4px 4px 0 0 var(--ink); }
+  .shadow-pixel-lg { box-shadow: 9px 9px 0 0 var(--ink); }
+
+  /* "Physical button" press interaction */
+  .btn-press { transition: transform .08s ease, box-shadow .08s ease; }
+  .btn-press:hover { transform: translate(-2px,-2px); }
+  .btn-press:active { transform: translate(3px,3px); box-shadow: 2px 2px 0 0 var(--ink) !important; }
+
+  .card-lift { transition: transform .15s ease, box-shadow .15s ease; }
+  .card-lift:hover { transform: translate(-3px,-3px); box-shadow: 9px 9px 0 0 var(--ink); }
+
+  /* Stair-step pixel corners for badges/ribbons */
+  .pixel-notch {
+    clip-path: polygon(0 8px,8px 8px,8px 0,calc(100% - 8px) 0,calc(100% - 8px) 8px,100% 8px,100% calc(100% - 8px),calc(100% - 8px) calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,8px calc(100% - 8px),0 calc(100% - 8px));
+  }
+
+  /* Console screen scanline texture, used only inside the hero bezel */
+  .scanlines::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(rgba(22,33,62,0.05) 0px, rgba(22,33,62,0.05) 1px, transparent 1px, transparent 3px);
+    pointer-events: none;
+  }
+
+  .xp-fill { transition: width 1.1s cubic-bezier(.2,.8,.2,1); }
+
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+  .blinking { animation: blink 1.6s step-start infinite; }
+
+  .font-pixel { letter-spacing: 0.02em; }
+
+  /* Orbiting skill-icon ring around the hero avatar */
+  @keyframes orbit-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes orbit-spin-reverse { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+  .orbit-ring { animation: orbit-spin 16s linear infinite; }
+  .orbit-icon { animation: orbit-spin-reverse 16s linear infinite; }
+  @media (prefers-reduced-motion: reduce) {
+    .orbit-ring, .orbit-icon { animation: none; }
+  }
+
+  /* Nav avatar: hidden until the page is scrolled past the hero */
+  #navAvatar {
+    opacity: 0;
+    transform: scale(0.4);
+    pointer-events: none;
+    transition: opacity .25s ease, transform .25s cubic-bezier(.34,1.56,.64,1);
+  }
+  #navAvatar.nav-avatar-visible {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+</style>
+</head>
+
+<body class="font-body text-ink antialiased min-h-screen">
+
+  <!-- ============ NAV ============ -->
+  <header class="sticky top-0 z-50 bg-ink text-bg border-b-4 border-ink">
+    <div class="max-w-5xl mx-auto px-5 h-16 flex items-center justify-between">
+      <a href="#top" class="flex items-center gap-3 group">
+        <span class="relative flex items-center justify-center w-8 h-8 bg-red border-2 border-bg rounded-sm">
+          <span class="w-2.5 h-2.5 bg-bg rounded-full blinking"></span>
+        </span>
+
+        <!-- Appears only after scrolling past the hero -->
+        <img id="navAvatar"
+             src=""
+             alt="Diaz Arqila"
+             class="w-8 h-8 rounded-full object-cover border-2 border-yellow">
+
+        <span class="font-pixel text-[11px] leading-tight">
+          DIAZ ARQILA<br>
+          <span class="text-[9px] text-yellow">PORTOFOLIO</span>
+        </span>
+      </a>
+
+      <!-- Desktop nav -->
+      <nav class="hidden md:flex items-center gap-5 text-sm font-display font-medium">
+        <a href="#about" class="hover:text-yellow transition-colors">Profil</a>
+        <a href="#perks" class="hover:text-yellow transition-colors">Fitur</a>
+        <a href="#education" class="hover:text-yellow transition-colors">Riwayat</a>
+        <a href="#skills" class="hover:text-yellow transition-colors">Keahlian</a>
+        <a href="#certificates" class="hover:text-yellow transition-colors">Sertifikat</a>
+        <a href="#projects" class="hover:text-yellow transition-colors">Proyek</a>
+        <a href="#contact" class="px-3 py-1.5 bg-yellow text-ink border-2 border-bg rounded font-bold btn-press">
+          Kontak
+        </a>
+      </nav>
+
+      <!-- Mobile toggle -->
+      <button id="menuBtn" class="md:hidden font-pixel text-[10px] px-3 py-2 bg-yellow text-ink border-2 border-bg rounded btn-press">
+        MENU
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="hidden md:hidden border-t-4 border-bg bg-ink">
+      <nav class="max-w-5xl mx-auto px-5 py-3 flex flex-col gap-1 text-sm font-display font-semibold">
+        <a href="#about" class="py-2 border-b border-bg/20">▸ Profil</a>
+        <a href="#perks" class="py-2 border-b border-bg/20">▸ Fitur</a>
+        <a href="#education" class="py-2 border-b border-bg/20">▸ Riwayat Pendidikan</a>
+        <a href="#skills" class="py-2 border-b border-bg/20">▸ Keahlian</a>
+        <a href="#certificates" class="py-2 border-b border-bg/20">▸ Sertifikat</a>
+        <a href="#projects" class="py-2 border-b border-bg/20">▸ Proyek</a>
+        <a href="#contact" class="py-2">▸ Kontak</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top" class="max-w-5xl mx-auto px-5 py-14 space-y-24">
+
+    <!-- ============ HERO / PLAYER CARD ============ -->
+    <section id="about" class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+
+      <!-- Player portrait with orbiting skill icons -->
+      <div class="md:col-span-4">
+        <div class="relative w-64 h-64 sm:w-72 sm:h-72 mx-auto">
+
+          <!-- orbit ring: rotates continuously, icons counter-rotate to stay upright -->
+          <div class="orbit-ring absolute inset-0">
+            <div class="absolute top-1/2 left-1/2 w-11 h-11 -ml-[22px] -mt-[22px]" style="transform: rotate(0deg) translateX(128px);">
+              <div class="orbit-icon w-11 h-11 flex items-center justify-center bg-red border-2 border-ink rounded-lg shadow-pixel-sm p-2">
+                <img src="https://cdn.simpleicons.org/php/ffffff" alt="PHP" class="w-full h-full object-contain">
+              </div>
+            </div>
+            <div class="absolute top-1/2 left-1/2 w-11 h-11 -ml-[22px] -mt-[22px]" style="transform: rotate(72deg) translateX(128px);">
+              <div class="orbit-icon w-11 h-11 flex items-center justify-center bg-yellow border-2 border-ink rounded-lg shadow-pixel-sm p-2">
+                <img src="https://cdn.simpleicons.org/laravel/16213E" alt="Laravel" class="w-full h-full object-contain">
+              </div>
+            </div>
+            <div class="absolute top-1/2 left-1/2 w-11 h-11 -ml-[22px] -mt-[22px]" style="transform: rotate(144deg) translateX(128px);">
+              <div class="orbit-icon w-11 h-11 flex items-center justify-center bg-blue border-2 border-ink rounded-lg shadow-pixel-sm p-2">
+                <img src="https://cdn.simpleicons.org/mysql/ffffff" alt="MySQL" class="w-full h-full object-contain">
+              </div>
+            </div>
+            <div class="absolute top-1/2 left-1/2 w-11 h-11 -ml-[22px] -mt-[22px]" style="transform: rotate(216deg) translateX(128px);">
+              <div class="orbit-icon w-11 h-11 flex items-center justify-center bg-purple border-2 border-ink rounded-lg shadow-pixel-sm p-2">
+                <img src="https://cdn.simpleicons.org/figma/ffffff" alt="Figma" class="w-full h-full object-contain">
+              </div>
+            </div>
+            <div class="absolute top-1/2 left-1/2 w-11 h-11 -ml-[22px] -mt-[22px]" style="transform: rotate(288deg) translateX(128px);">
+              <div class="orbit-icon w-11 h-11 flex items-center justify-center bg-green border-2 border-ink rounded-lg shadow-pixel-sm p-2">
+                <img src="https://cdn.simpleicons.org/git/ffffff" alt="Git" class="w-full h-full object-contain">
+              </div>
+            </div>
+          </div>
+
+          <!-- center avatar -->
+          <div class="absolute inset-[38px] rounded-full overflow-hidden border-4 border-ink shadow-pixel-lg bg-panel scanlines">
+            <img
+              src="diaz.png"
+              alt="Foto Diaz Arqila"
+              class="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+
+        <div class="mt-4 flex items-center justify-center gap-2 font-pixel text-[9px] text-muted">
+          <span>PLAYER 1</span>
+          <span>·</span>
+          <span class="flex items-center gap-1">📍 BANDUNG, ID</span>
+        </div>
+      </div>
+
+      <!-- Player stats -->
+      <div class="md:col-span-8 space-y-5">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-green text-white border-2 border-ink rounded font-pixel text-[9px] shadow-pixel-sm">
+          <span class="w-2 h-2 rounded-full bg-white blinking"></span>
+          SMK NEGERI 4 BANDUNG — RPL
+        </div>
+
+        <h1 class="font-display text-4xl sm:text-5xl font-bold leading-tight">
+          Hi, saya Diaz Arqila
+        </h1>
+
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1.5 bg-purple text-white border-2 border-ink rounded-lg font-display font-bold text-sm shadow-pixel-sm">
+            🤖 AI Enthusiast
+          </span>
+          <span class="px-3 py-1.5 bg-blue text-white border-2 border-ink rounded-lg font-display font-bold text-sm shadow-pixel-sm">
+            🎨 UI/UX Designer
+          </span>
+        </div>
+
+        <p class="text-muted text-base leading-relaxed font-medium max-w-xl">
+          Saya senang menggabungkan dua sisi sekaligus: merancang antarmuka yang enak dipakai, dan membangun sistem
+          di baliknya biar jalan mulus — dari eksplorasi <strong class="text-ink">kecerdasan buatan (AI)</strong>,
+          backend & basis data, sampai proses desain <strong class="text-ink">UI/UX</strong> untuk aplikasi yang nyaman digunakan.
+        </p>
+
+        <!-- XP bar gimmick -->
+        <div class="max-w-md pt-1">
+          <div class="flex justify-between font-pixel text-[9px] text-muted mb-1">
+            <span>SEMANGAT BELAJAR</span>
+            <span id="xpLabel">92%</span>
+          </div>
+          <div class="h-4 bg-panel border-2 border-ink rounded-full overflow-hidden">
+            <div id="xpBar" class="xp-fill h-full bg-gradient-to-r from-yellow via-red to-purple" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3 pt-2">
+          <a href="#projects" class="btn-press px-5 py-2.5 bg-red text-white border-2 border-ink rounded-lg font-display font-bold shadow-pixel-sm">
+            ▶ START — Lihat Proyek
+          </a>
+          <a href="#contact" class="btn-press px-5 py-2.5 bg-panel text-ink border-2 border-ink rounded-lg font-display font-bold shadow-pixel-sm">
+            ✉ SELECT — Hubungi Saya
+          </a>
+          <a href="DiazArqila-CV.pdf" download class="btn-press px-5 py-2.5 bg-yellow text-ink border-2 border-ink rounded-lg font-display font-bold shadow-pixel-sm">
+            ⬇ ITEM GET — Download CV
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FITUR / PERKS ============ -->
+    <section id="perks" class="space-y-6">
+      <div class="flex items-center gap-3">
+        <span class="font-pixel text-[10px] px-2 py-1 bg-ink text-bg rounded">PERKS</span>
+        <h2 class="font-display text-2xl font-bold">Apa yang Saya Bawa ke Tim</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="card-lift bg-panel border-3 border-ink rounded-xl p-5 shadow-pixel-sm space-y-2" style="border-width:3px">
+          <div class="w-10 h-10 flex items-center justify-center bg-purple text-white border-2 border-ink rounded-lg text-lg">🤖</div>
+          <h3 class="font-display font-bold">AI-Powered Workflow</h3>
+          <p class="text-sm text-muted leading-relaxed">Terbiasa memakai LLM & prompt engineering buat riset, prototyping cepat, dan otomasi tugas berulang.</p>
+        </div>
+        <div class="card-lift bg-panel border-3 border-ink rounded-xl p-5 shadow-pixel-sm space-y-2" style="border-width:3px">
+          <div class="w-10 h-10 flex items-center justify-center bg-blue text-white border-2 border-ink rounded-lg text-lg">🎨</div>
+          <h3 class="font-display font-bold">Desain Berpusat Pengguna</h3>
+          <p class="text-sm text-muted leading-relaxed">Merancang alur & tampilan dari sudut pandang pengguna, bukan cuma yang enak dilihat.</p>
+        </div>
+        <div class="card-lift bg-panel border-3 border-ink rounded-xl p-5 shadow-pixel-sm space-y-2" style="border-width:3px">
+          <div class="w-10 h-10 flex items-center justify-center bg-green text-white border-2 border-ink rounded-lg text-lg">⚡</div>
+          <h3 class="font-display font-bold">Iterasi Cepat</h3>
+          <p class="text-sm text-muted leading-relaxed">Suka membangun versi kecil dulu, uji coba, lalu perbaiki — bukan menunggu sempurna baru jalan.</p>
+        </div>
+        <div class="card-lift bg-panel border-3 border-ink rounded-xl p-5 shadow-pixel-sm space-y-2" style="border-width:3px">
+          <div class="w-10 h-10 flex items-center justify-center bg-red text-white border-2 border-ink rounded-lg text-lg">🤝</div>
+          <h3 class="font-display font-bold">Kolaboratif</h3>
+          <p class="text-sm text-muted leading-relaxed">Aktif di proyek tim & komunitas tech — nyaman kerja bareng dan berbagi progres secara terbuka.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ EDUCATION / QUEST LOG ============ -->
+    <section id="education" class="space-y-6">
+      <div class="flex items-center gap-3">
+        <span class="font-pixel text-[10px] px-2 py-1 bg-ink text-bg rounded">QUEST LOG</span>
+        <h2 class="font-display text-2xl font-bold">Riwayat Pendidikan</h2>
+      </div>
+
+      <div class="relative pl-8 space-y-6 before:content-[''] before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-1 before:bg-ink before:rounded-full">
+
+        <!-- SD -->
+        <div class="relative">
+          <span class="absolute -left-8 top-1 w-6 h-6 bg-yellow border-2 border-ink rounded-full flex items-center justify-center text-xs font-pixel">1</span>
+          <div class="bg-panel border-3 border-ink rounded-xl p-5 shadow-pixel-sm" style="border-width:3px">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+              <h3 class="font-display font-bold text-lg">SDS Kartika X-1 Bandung</h3>
+              <span class="font-pixel text-[8px] px-2 py-1 bg-green text-white border border-ink rounded pixel-notch">TAMAT ✓</span>
+            </div>
+            <p class="text-sm text-muted">Sekolah Dasar</p>
+          </div>
+        </div>
+
+        <!-- SMP -->
+        <div class="relative">
+          <span class="absolute -left-8 top-1 w-6 h-6 bg-yellow border-2 border-ink rounded-full flex items-center justify-center text-xs font-pixel">2</span>
+          <div class="bg-panel border-3 border-ink rounded-xl p-5 shadow-pixel-sm" style="border-width:3px">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+              <h3 class="font-display font-bold text-lg">SMP Negeri 20 Bandung</h3>
+              <span class="font-pixel text-[8px] px-2 py-1 bg-green text-white border border-ink rounded pixel-notch">TAMAT ✓</span>
+            </div>
+            <p class="text-sm text-muted">Sekolah Menengah Pertama</p>
+          </div>
+        </div>
+
+        <!-- SMK -->
+        <div class="relative">
+          <span class="absolute -left-8 top-1 w-6 h-6 bg-red border-2 border-ink rounded-full flex items-center justify-center text-xs font-pixel text-white">3</span>
+          <div class="bg-panel border-3 border-ink rounded-xl p-5 shadow-pixel-sm" style="border-width:3px">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+              <h3 class="font-display font-bold text-lg">SMK Negeri 4 Bandung</h3>
+              <span class="font-pixel text-[8px] px-2 py-1 bg-blue text-white border border-ink rounded pixel-notch blinking">ON PROGRESS</span>
+            </div>
+            <p class="text-sm text-muted mb-1">Rekayasa Perangkat Lunak (RPL) · 2023 — Sekarang</p>
+            <p class="text-xs text-muted/90 leading-relaxed">Belajar pemrograman web, OOP, basis data relasional, dan pengembangan perangkat lunak terstruktur.</p>
+            <p class="text-xs text-ink font-mono mt-2 pt-2 border-t border-ink/10">📍 Jl. Kliningan No. 6, Turangga, Kec. Lengkong, Kota Bandung, Jawa Barat 40264</p>
+          </div>
+        </div>
+
+      </div>
+      <p class="text-xs text-muted italic">* Tahun masuk/lulus SD & SMP belum diisi — silakan lengkapi sesuai data kamu.</p>
+    </section>
+
+    <!-- ============ SKILLS / INVENTORY ============ -->
+    <section id="skills" class="space-y-6">
+      <div class="flex items-center gap-3">
+        <span class="font-pixel text-[10px] px-2 py-1 bg-ink text-bg rounded">INVENTORY</span>
+        <h2 class="font-display text-2xl font-bold">Keahlian & Tools</h2>
+      </div>
+      <p class="text-muted text-sm max-w-xl -mt-2">Teknologi utama yang saya gunakan dalam pengembangan aplikasi & desain.</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+        <div class="card-lift bg-panel border-3 border-ink rounded-xl p-5 shadow-pixel-sm space-y-3" style="border-width:3px">
+          <div class="flex items-start justify-between">
+            <div class="w-11 h-11 flex items-center justify-center bg-red border-2 border-ink rounded-lg p-2"><img src="https://cdn.simpleicons.org/php/ffffff" alt="PHP" class="w-full h-full object-contain"></div>
+            <span class="font-pixel text-[7px] px-2 py-1 bg-yellow text-ink border border-ink rounded-full">BACKEND</span>
+          </div>
+          <h3 class="font-display font-bold">PHP</h3>
+          <p class="text-xs text-muted leading-relaxed">Bahasa utama untuk membangun logika backend, mengolah data, dan menghubungkan aplikasi ke database.</p>
+        </div>
+
+        <div class="card-lift bg-panel border-3 border-ink rounded-xl p-5 shadow-pixel-sm space-y-3" style="border-width:3px">
+          <div class="flex items-start justify-between">
+            <div class="w-11 h-11 flex items-center justify-center bg-yellow border-2 border-ink rounded-lg p-2"><img src="https://cdn.simpleicons.org/laravel/16213E" alt="Laravel" class="w-full h-full object-contain"></div>
+            <span class="font-pixel text-[7px] px-2 py-1 bg-yellow text-ink border border-ink rounded-full">FRAMEWORK</span>
+          </div>
+          <h3 class="font-display font-bold">Laravel</h3>
+          <p class="text-xs text-muted leading-relaxed">Membangun aplikasi web terstruktur dengan routing, autentikasi, dan integrasi database secara rapi.</p>
+        </div>
+
+        <div class="card-lift bg-panel border-3 border-ink rounded-xl p-5 shadow-pixel-sm space-y-3" style="border-width:3px">
+          <div class="flex items-start justify-between">
+            <div class="w-11 h-11 flex items-center justify-center bg-blue border-2 border-ink rounded-lg p-2"><img src="https://cdn.simpleicons.org/mysql/ffffff" alt="MySQL" class="w-full h-full object-contain"></div>
+            <span class="font-pixel text-[7px] px-2 py-1 bg-yellow text-ink border border-ink rounded-full">DATABASE</span>
+          </div>
+          <h3 class="font-display font-bold">MySQL</h3>
+          <p class="text-xs text-muted leading-relaxed">Perancangan struktur tabel, relasi antar data, dan query untuk kebutuhan aplikasi.</p>
+        </div>
+
+        <div class="card-lift bg-panel border-3 border-ink rounded-xl p-5 shadow-pixel-sm space-y-3" style="border-width:3px">
+          <div class="flex items-start justify-between">
+            <div class="w-11 h-11 flex items-center justify-center bg-purple border-2 border-ink rounded-lg p-2"><img src="https://cdn.simpleicons.org/figma/ffffff" alt="Figma" class="w-full h-full object-contain"></div>
+            <span class="font-pixel text-[7px] px-2 py-1 bg-yellow text-ink border border-ink rounded-full">DESIGN</span>
+          </div>
+          <h3 class="font-display font-bold">Figma</h3>
+          <p class="text-xs text-muted leading-relaxed">Merancang wireframe, prototipe, dan tampilan antarmuka yang siap diimplementasikan.</p>
+        </div>
+
+        <div class="card-lift bg-panel border-3 border-ink rounded-xl p-5 shadow-pixel-sm space-y-3" style="border-width:3px">
+          <div class="flex items-start justify-between">
+            <div class="w-11 h-11 flex items-center justify-center bg-green border-2 border-ink rounded-lg p-2"><img src="https://cdn.simpleicons.org/git/ffffff" alt="Git" class="w-full h-full object-contain"></div>
+            <span class="font-pixel text-[7px] px-2 py-1 bg-yellow text-ink border border-ink rounded-full">TOOLS</span>
+          </div>
+          <h3 class="font-display font-bold">Git & GitHub</h3>
+          <p class="text-xs text-muted leading-relaxed">Version control untuk kerja tim, tracking perubahan kode, dan kolaborasi proyek.</p>
+        </div>
+
+        <div class="card-lift bg-panel border-3 border-ink rounded-xl p-5 shadow-pixel-sm space-y-3" style="border-width:3px">
+          <div class="flex items-start justify-between">
+            <div class="w-11 h-11 flex items-center justify-center bg-ink text-white border-2 border-ink rounded-lg text-lg">🤖</div>
+            <span class="font-pixel text-[7px] px-2 py-1 bg-yellow text-ink border border-ink rounded-full">AI</span>
+          </div>
+          <h3 class="font-display font-bold">Prompt Engineering</h3>
+          <p class="text-xs text-muted leading-relaxed">Memanfaatkan LLM untuk riset, prototyping cepat, dan otomasi tugas pengembangan.</p>
+        </div>
+
+      </div>
+
+      <!-- Compact list of the rest of the stack -->
+      <div class="bg-panel border-3 border-ink rounded-xl p-5 shadow-pixel-sm" style="border-width:3px">
+        <h3 class="font-display font-bold text-sm mb-3 text-muted">Skill & tools lainnya</h3>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-2.5 py-1 bg-bg border border-ink rounded font-mono text-xs">Java</span>
+          <span class="px-2.5 py-1 bg-bg border border-ink rounded font-mono text-xs">Kotlin</span>
+          <span class="px-2.5 py-1 bg-bg border border-ink rounded font-mono text-xs">HTML/CSS</span>
+          <span class="px-2.5 py-1 bg-bg border border-ink rounded font-mono text-xs">MariaDB</span>
+          <span class="px-2.5 py-1 bg-bg border border-ink rounded font-mono text-xs">Unity</span>
+          <span class="px-2.5 py-1 bg-bg border border-ink rounded font-mono text-xs">Blender</span>
+          <span class="px-2.5 py-1 bg-bg border border-ink rounded font-mono text-xs">Postman</span>
+          <span class="px-2.5 py-1 bg-bg border border-ink rounded font-mono text-xs">UI/UX Design</span>
+          <span class="px-2.5 py-1 bg-bg border border-ink rounded font-mono text-xs">Wireframing</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============ SERTIFIKAT / TROPHY CASE ============ -->
+    <section id="certificates" class="space-y-6">
+      <div class="flex items-center gap-3">
+        <span class="font-pixel text-[10px] px-2 py-1 bg-ink text-bg rounded">TROPHY CASE</span>
+        <h2 class="font-display text-2xl font-bold">Sertifikat & Pelatihan</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <!-- TODO: ganti gambar & isi teks dengan sertifikat asli — duplikat kartu ini sesuai jumlah sertifikat -->
+        <div class="card-lift bg-panel border-4 border-ink rounded-2xl overflow-hidden shadow-pixel-sm">
+          <img src="sertifikat_oracle.jpg" alt="Sertifikat Database Programming with SQL - Oracle Academy" class="h-32 w-full object-cover border-b-4 border-ink">
+          <div class="p-4 space-y-1.5">
+            <h3 class="font-display font-bold text-sm">Database Programming with SQL</h3>
+            <p class="text-xs text-muted">Oracle Academy</p>
+            <span class="inline-block mt-1 font-pixel text-[8px] px-2 py-1 bg-yellow text-ink border border-ink rounded pixel-notch">2026</span>
+          </div>
+        </div>
+
+        <div class="card-lift bg-panel border-4 border-ink rounded-2xl overflow-hidden shadow-pixel-sm">
+          <div class="h-32 border-b-4 border-dashed border-ink/30 bg-bg flex items-center justify-center text-center px-3">
+            <span class="text-xs font-mono text-muted">📄 Tempel gambar<br>sertifikat di sini</span>
+          </div>
+          <div class="p-4 space-y-1.5">
+            <h3 class="font-display font-bold text-sm">Nama Sertifikat</h3>
+            <p class="text-xs text-muted">Nama Penerbit / Platform</p>
+            <span class="inline-block mt-1 font-pixel text-[8px] px-2 py-1 bg-yellow text-ink border border-ink rounded pixel-notch">2026</span>
+          </div>
+        </div>
+
+        <div class="card-lift bg-panel border-4 border-ink rounded-2xl overflow-hidden shadow-pixel-sm">
+          <div class="h-32 border-b-4 border-dashed border-ink/30 bg-bg flex items-center justify-center text-center px-3">
+            <span class="text-xs font-mono text-muted">📄 Tempel gambar<br>sertifikat di sini</span>
+          </div>
+          <div class="p-4 space-y-1.5">
+            <h3 class="font-display font-bold text-sm">Nama Sertifikat</h3>
+            <p class="text-xs text-muted">Nama Penerbit / Platform</p>
+            <span class="inline-block mt-1 font-pixel text-[8px] px-2 py-1 bg-yellow text-ink border border-ink rounded pixel-notch">2026</span>
+          </div>
+        </div>
+      </div>
+      <p class="text-xs text-muted italic">* Belum ada data sertifikat — kirim daftar sertifikat/pelatihanmu (nama, penyelenggara, tahun, dan gambar/scan-nya) biar bisa aku isi.</p>
+    </section>
+
+    <!-- ============ PROJECTS / CARTRIDGES ============ -->
+    <section id="projects" class="space-y-6">
+      <div class="flex items-center gap-3">
+        <span class="font-pixel text-[10px] px-2 py-1 bg-ink text-bg rounded">CARTRIDGES</span>
+        <h2 class="font-display text-2xl font-bold">Project</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+        <!-- Project 1 -->
+        <div class="card-lift bg-panel border-4 border-ink rounded-2xl overflow-hidden shadow-pixel-sm">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" alt="Tampilan proyek SENADA Management System" class="w-full h-40 object-cover border-b-4 border-ink">
+            <span class="absolute top-3 right-3 font-pixel text-[8px] px-2 py-1 bg-green text-white border-2 border-ink rounded pixel-notch">SELESAI</span>
+          </div>
+          <div class="p-5 space-y-3">
+            <div class="text-xs font-mono text-muted">Web Application</div>
+            <h3 class="font-display font-bold text-lg">SENADA Management System</h3>
+            <p class="text-sm text-muted leading-relaxed">Aplikasi pengelolaan terintegrasi untuk alur data, dokumentasi, dan manajemen tugas internal — termasuk perancangan antarmuka agar mudah dipakai tim.</p>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-bg border border-ink font-mono text-[11px]">Laravel</span>
+              <span class="px-2 py-0.5 rounded bg-bg border border-ink font-mono text-[11px]">MySQL</span>
+              <span class="px-2 py-0.5 rounded bg-bg border border-ink font-mono text-[11px]">Tailwind</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="card-lift bg-panel border-4 border-ink rounded-2xl overflow-hidden shadow-pixel-sm">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" alt="Tampilan proyek Showroom Management System" class="w-full h-40 object-cover border-b-4 border-ink">
+            <span class="absolute top-3 right-3 font-pixel text-[8px] px-2 py-1 bg-green text-white border-2 border-ink rounded pixel-notch">SELESAI</span>
+          </div>
+          <div class="p-5 space-y-3">
+            <div class="text-xs font-mono text-muted">Backend & Database</div>
+            <h3 class="font-display font-bold text-lg">Showroom Management System</h3>
+            <p class="text-sm text-muted leading-relaxed">Sistem pendataan unit dan transaksi penjualan berbasis backend, dengan struktur database relasional yang efisien.</p>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-bg border border-ink font-mono text-[11px]">PHP</span>
+              <span class="px-2 py-0.5 rounded bg-bg border border-ink font-mono text-[11px]">MariaDB</span>
+              <span class="px-2 py-0.5 rounded bg-bg border border-ink font-mono text-[11px]">SQL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 3 - In progress -->
+        <div class="card-lift bg-panel border-4 border-ink rounded-2xl overflow-hidden shadow-pixel-sm sm:col-span-2">
+          <div class="grid sm:grid-cols-[240px_1fr]">
+            <div class="relative">
+              <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80" alt="Tampilan proyek Web Bekal Opat" class="w-full h-40 sm:h-full object-cover border-b-4 sm:border-b-0 sm:border-r-4 border-ink">
+              <span class="absolute top-3 right-3 font-pixel text-[8px] px-2 py-1 bg-blue text-white border-2 border-ink rounded pixel-notch blinking">SEDANG DIKERJAKAN</span>
+            </div>
+            <div class="p-5 space-y-3">
+              <div class="text-xs font-mono text-muted">Web Application</div>
+              <h3 class="font-display font-bold text-lg">Web Bekal Opat</h3>
+              <p class="text-sm text-muted leading-relaxed">Deskripsi proyek menyusul — bagian ini akan diisi begitu detail Web Bekal Opat tersedia.</p>
+              <div class="flex flex-wrap gap-1.5 pt-1">
+                <span class="px-2 py-0.5 rounded bg-bg border border-ink font-mono text-[11px]">TBD</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <p class="text-xs text-muted italic">* Ganti foto proyek di atas dengan screenshot asli aplikasimu untuk hasil terbaik.</p>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section id="contact" class="space-y-6">
+      <div class="flex items-center gap-3">
+        <span class="font-pixel text-[10px] px-2 py-1 bg-ink text-bg rounded">CONTINUE?</span>
+        <h2 class="font-display text-2xl font-bold">Kontak</h2>
+      </div>
+      <p class="text-muted text-sm max-w-lg leading-relaxed">
+        Klik salah satu ikon di bawah untuk langsung terhubung, atau
+        <a href="DiazArqila-CV.pdf" download class="font-bold text-ink underline decoration-yellow decoration-2 underline-offset-2">download CV</a> saya.
+      </p>
+
+      <!-- Contact cards: icon + label + value, whole card is clickable -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a href="mailto:diazarqila@gmail.com" title="Email"
+           class="btn-press flex items-center gap-3 bg-panel border-3 border-ink rounded-xl p-4 shadow-pixel-sm" style="border-width:3px">
+          <span class="w-11 h-11 shrink-0 flex items-center justify-center bg-red text-white border-2 border-ink rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0-.828.672-1.5 1.5-1.5h16.5c.828 0 1.5.672 1.5 1.5v10.5a1.5 1.5 0 0 1-1.5 1.5H3.75a1.5 1.5 0 0 1-1.5-1.5V6.75Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m3 7 9 6 9-6"/></svg>
+          </span>
+          <span class="min-w-0">
+            <span class="block font-pixel text-[8px] text-muted">EMAIL</span>
+            <span class="block font-display font-bold text-sm truncate">diazarqila@gmail.com</span>
+          </span>
+        </a>
+
+        <a href="https://github.com/diazarqila" target="_blank" rel="noopener" title="GitHub"
+           class="btn-press flex items-center gap-3 bg-panel border-3 border-ink rounded-xl p-4 shadow-pixel-sm" style="border-width:3px">
+          <span class="w-11 h-11 shrink-0 flex items-center justify-center bg-ink text-white border-2 border-ink rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M12 .5C5.73.5.98 5.24.98 11.52c0 5.02 3.26 9.28 7.77 10.78.57.1.78-.25.78-.55v-2c-3.16.69-3.83-1.36-3.83-1.36-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.75 1.18 1.75 1.18 1.02 1.75 2.68 1.24 3.34.95.1-.74.4-1.24.72-1.53-2.52-.29-5.17-1.26-5.17-5.6 0-1.24.44-2.25 1.17-3.04-.12-.29-.51-1.45.11-3.02 0 0 .96-.31 3.14 1.16a10.9 10.9 0 0 1 5.72 0c2.18-1.47 3.14-1.16 3.14-1.16.62 1.57.23 2.73.11 3.02.73.79 1.17 1.8 1.17 3.04 0 4.35-2.66 5.31-5.19 5.59.41.36.77 1.07.77 2.15v3.19c0 .3.21.66.79.55 4.5-1.51 7.76-5.76 7.76-10.78C23.02 5.24 18.27.5 12 .5Z"/></svg>
+          </span>
+          <span class="min-w-0">
+            <span class="block font-pixel text-[8px] text-muted">GITHUB</span>
+            <span class="block font-display font-bold text-sm truncate">diazarqila</span>
+          </span>
+        </a>
+
+        <!-- TODO: ganti dengan username Instagram kamu -->
+        <a href="https://instagram.com/username_kamu" target="_blank" rel="noopener" title="Instagram"
+           class="btn-press flex items-center gap-3 bg-panel border-3 border-ink rounded-xl p-4 shadow-pixel-sm" style="border-width:3px">
+          <span class="w-11 h-11 shrink-0 flex items-center justify-center bg-purple text-white border-2 border-ink rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.2" cy="6.8" r="1"/></svg>
+          </span>
+          <span class="min-w-0">
+            <span class="block font-pixel text-[8px] text-muted">INSTAGRAM</span>
+            <span class="block font-display font-bold text-sm truncate">@username_kamu</span>
+          </span>
+        </a>
+
+        <!-- TODO: ganti 62xxxxxxxxxxx dengan nomor WhatsApp kamu (format internasional, tanpa + atau 0 di depan) -->
+        <a href="https://wa.me/62xxxxxxxxxxx" target="_blank" rel="noopener" title="WhatsApp"
+           class="btn-press flex items-center gap-3 bg-panel border-3 border-ink rounded-xl p-4 shadow-pixel-sm" style="border-width:3px">
+          <span class="w-11 h-11 shrink-0 flex items-center justify-center bg-green text-white border-2 border-ink rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.29-1.38a9.9 9.9 0 0 0 4.7 1.2h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.83 9.83 0 0 0 12.04 2Zm0 18.12h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.14.82.84-3.06-.2-.31a8.22 8.22 0 0 1-1.26-4.36c0-4.55 3.71-8.26 8.27-8.26a8.2 8.2 0 0 1 5.85 2.43 8.19 8.19 0 0 1 2.42 5.83c0 4.56-3.71 8.27-8.28 8.27Zm4.53-6.2c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.17.24-.64.81-.78.97-.14.17-.29.19-.53.06-.25-.12-1.04-.38-1.99-1.22-.73-.66-1.23-1.46-1.37-1.71-.14-.24-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.15.16-.25.25-.42.08-.16.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43-.15-.01-.31-.01-.48-.01-.16 0-.43.06-.66.31-.23.24-.86.85-.86 2.06 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.24 3.74.59.26 1.06.41 1.42.53.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.11-.22-.17-.47-.29Z"/></svg>
+          </span>
+          <span class="min-w-0">
+            <span class="block font-pixel text-[8px] text-muted">WHATSAPP</span>
+            <span class="block font-display font-bold text-sm truncate">+62 xxx-xxxx-xxxx</span>
+          </span>
+        </a>
+      </div>
+
+      <!-- Location + map -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+        <div class="bg-panel border-3 border-ink rounded-xl p-5 shadow-pixel-sm font-mono text-xs space-y-2" style="border-width:3px">
+          <span class="text-muted block border-b border-ink/10 pb-2 font-bold font-display text-sm">📍 Lokasi & Institusi</span>
+          <p class="text-ink font-bold text-sm pt-1">SMK Negeri 4 Bandung</p>
+          <p class="text-muted">Jl. Kliningan No. 6, Turangga, Kec. Lengkong, Kota Bandung, Jawa Barat 40264</p>
+          <p class="text-muted pt-2">Domisili: Bandung, Indonesia</p>
+        </div>
+
+        <div class="border-3 border-ink rounded-xl overflow-hidden shadow-pixel-sm" style="border-width:3px">
+          <iframe
+            title="Peta lokasi SMK Negeri 4 Bandung"
+            src="https://www.google.com/maps?q=SMK+Negeri+4+Bandung,+Jl.+Kliningan+No.6,+Turangga,+Lengkong,+Bandung&output=embed"
+            class="w-full h-full min-h-[220px] border-0"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="border-t-4 border-ink bg-ink text-bg py-8 text-center">
+    <p class="font-pixel text-[9px] leading-relaxed">
+      © 2026 DIAZ ARQILA <span class="text-yellow">·</span> SAVE FILE UPDATED
+      <br class="sm:hidden">
+      <span class="text-muted">·</span> TO BE CONTINUED...
+    </p>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+    // Animate XP bar once on load
+    window.addEventListener('load', () => {
+      const bar = document.getElementById('xpBar');
+      requestAnimationFrame(() => { bar.style.width = '92%'; });
+    });
+
+    // Show the nav avatar only after scrolling past the hero
+    const navAvatar = document.getElementById('navAvatar');
+    const heroSection = document.getElementById('about');
+    function toggleNavAvatar() {
+      const threshold = heroSection.offsetTop + heroSection.offsetHeight - 100;
+      if (window.scrollY > threshold) {
+        navAvatar.classList.add('nav-avatar-visible');
+      } else {
+        navAvatar.classList.remove('nav-avatar-visible');
+      }
+    }
+    window.addEventListener('scroll', toggleNavAvatar, { passive: true });
+    toggleNavAvatar();
+  </script>
+
+</body>
+</html>
