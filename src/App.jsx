@@ -8,6 +8,7 @@ import bekalOpatImg from './assets/bekal_opat.png'
 import bellsAfterDarkImg from './assets/bells_after_dark.png'
 import { MessageSquare, Mail, MessageCircle, Send } from 'lucide-react';
 import { Play, PlayCircle, Star, Rocket } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import './index.css'
 
 export default function App() {
@@ -767,13 +768,14 @@ export default function App() {
                   </button>
                   {cert.pdf && (
                     <a
-                      href={cert.pdf}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-press flex-1 text-center py-2 bg-yellow text-ink border-2 border-ink rounded-lg font-display font-bold text-xs shadow-pixel-sm"
-                    >
-                      Buka PDF ↗
-                    </a>
+  href={cert.pdf}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="btn-press flex-1 inline-flex items-center justify-center gap-1.5 py-2 bg-yellow text-ink border-2 border-ink rounded-lg font-display font-bold text-xs shadow-pixel-sm"
+>
+  <span>Buka PDF</span>
+  <ExternalLink className="w-4 h-4 p-0.5 bg-blue text-white rounded shrink-0" />
+</a>
                   )}
                 </div>
               </div>
