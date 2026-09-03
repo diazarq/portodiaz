@@ -508,9 +508,6 @@ export default function App() {
               </div>
             </div>
           </div>
-          <p className="text-xs text-muted italic">
-            * Tahun masuk/lulus SD &amp; SMP dapat disesuaikan dengan data kamu.
-          </p>
         </section>
 
         {/* ============ SKILLS / INVENTORY ============ */}
